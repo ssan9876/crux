@@ -40,9 +40,13 @@ const payload = {
 
 const webhook = process.env.DISCORD_WEBHOOK_URL;
 if (process.argv.includes("--dry-run") || !webhook) {
-  if (!webhook) console.log("DISCORD_WEBHOOK_URL is not set, so nothing was posted. This is what would be sent:\n");
+  if (!webhook) {
+    // "::warning::" shows up as a yellow note on the run in GitHub's Actions tab.
+    console.log("::warning::DISCORD_WEBHOOK_URL secret is not set, so nothing was posted to Discord.");
+    console.log("This is what would be sent:\n");
+  }
   console.log(JSON.stringify(payload, null, 2));
-  process.exit(webhook || process.argv.includes("--dry-run") ? 0 : 1);
+  process.exit(0);
 }
 
 const res = await fetch(webhook, {
