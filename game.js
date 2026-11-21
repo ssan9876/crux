@@ -131,11 +131,43 @@
     },
   };
 
+  const validState = (s) =>
+    s && s.day === today && Array.isArray(s.guesses) && s.guesses.every((g) => typeof g === "string") &&
+    ["playing", "won", "lost"].includes(s.status);
   let state = store.get(KEY_STATE, null);
-  if (!state || state.day !== today) state = { day: today, guesses: [], status: "playing" };
+  if (!validState(state)) state = { day: today, guesses: [], status: "playing" };
 
-  const blankStats = () => ({ played: 0, wins: 0, streak: 0, maxStreak: 0, lastWinDay: null, dist: [0, 0, 0, 0, 0, 0] });
-  let stats = { ...blankStats(), ...store.get(KEY_STATS, {}) };
+  // Can this browser actually save? (Not in some private modes, or with site data blocked.)
+  const canSave = (() => {
+    try {
+      localStorage.setItem("crux:test", "1");
+      localStorage.removeItem("crux:test");
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+
+  // Ask the browser not to clear Crux's data when it's low on space or tidying up.
+  function keepStorage() {
+    if (preview || !navigator.storage?.persist) return;
+    navigator.storage.persisted().then((yes) => yes || navigator.storage.persist()).catch(() => {});
+  }
+
+  // Never trust saved data blindly: a damaged or hand-edited value shouldn't break the game.
+  function cleanStats(s) {
+    const n = (v) => (Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0);
+    if (!s || typeof s !== "object") s = {};
+    return {
+      played: n(s.played),
+      wins: n(s.wins),
+      streak: n(s.streak),
+      maxStreak: n(s.maxStreak),
+      lastWinDay: Number.isFinite(s.lastWinDay) ? s.lastWinDay : null,
+      dist: Array.from({ length: MAX_GUESSES }, (_, i) => n(s.dist?.[i])),
+    };
+  }
+  let stats = cleanStats(store.get(KEY_STATS, null));
 
   function recordResult(won) {
     stats.played++;
@@ -318,7 +350,10 @@
     store.set(KEY_STATE, state);
     render();
     if (state.status === "playing") input.focus();
-    else setTimeout(openStats, 1200);
+    else {
+      keepStorage();
+      setTimeout(openStats, 1200);
+    }
   });
 
   // ---------- Share ----------
@@ -381,9 +416,52 @@
         return li;
       })
     );
-    $("stats").showModal();
+    $("no-save").hidden = canSave || !!preview;
+    $("backup-say").textContent = "";
+    if (!$("stats").open) $("stats").showModal();
   }
   $("open-stats").addEventListener("click", openStats);
+
+  // ---------- Backup code: move stats to another browser or device ----------
+  const toCode = (obj) => "CRUX1." + btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(obj))));
+  const fromCode = (code) => {
+    const body = code.trim().replace(/^CRUX1\./, "");
+    return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(body), (c) => c.charCodeAt(0))));
+  };
+
+  $("copy-backup").addEventListener("click", async () => {
+    const code = toCode({ stats, state });
+    try {
+      await navigator.clipboard.writeText(code);
+      $("backup-say").textContent = "Backup code copied. Paste it into Crux on your other device.";
+    } catch {
+      $("restore-code").value = code;
+      $("restore-code").select();
+      $("backup-say").textContent = "Copy the code in the box above.";
+    }
+  });
+
+  $("restore").addEventListener("click", () => {
+    let data;
+    try {
+      data = fromCode($("restore-code").value);
+    } catch {
+      $("backup-say").textContent = "That code isn't valid. Copy it again from your other device, all of it.";
+      return;
+    }
+    stats = cleanStats(data.stats);
+    store.set(KEY_STATS, stats);
+    // Bring today's game over too, unless you've already started it here.
+    if (validState(data.state) && state.guesses.length === 0) {
+      state = data.state;
+      store.set(KEY_STATE, state);
+      render();
+    }
+    keepStorage();
+    $("restore-code").value = "";
+    openStats();
+    $("backup-say").textContent = `Stats restored: ${stats.played} played, best streak ${stats.maxStreak}.`;
+  });
 
   render();
   if (state.status === "playing") $("guess").focus({ preventScroll: true });

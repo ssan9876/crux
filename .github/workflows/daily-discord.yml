@@ -1,0 +1,19 @@
+name: Post daily question to Discord
+
+on:
+  schedule:
+    # 07:05 UTC = 12:05 AM in Arizona (UTC-7 all year, no daylight saving).
+    # GitHub may start scheduled runs a few minutes late.
+    - cron: "5 7 * * *"
+  workflow_dispatch: # lets you post by hand from the Actions tab
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post today's question
+        run: node tools/post_discord.mjs
+        env:
+          TZ: America/Phoenix
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
