@@ -1,17 +1,20 @@
 :root {
-  --paper: #eef1f7;
-  --ink: #1b2340;
-  --ink-soft: #5a6383;
-  --cobalt: #2b45e0;
+  --paper: #f3f4f6;
+  --ink: #15192b;
+  --ink-soft: #4a5068;
+  --cobalt: #2b45e0;       /* accent text: messages, focus rings, links */
+  --button: #2b45e0;
+  --button-ink: #ffffff;
   --tile: #ffffff;
-  --rule: #c9d0e0;
+  --rule: #b6bccb;         /* outlines of inputs and empty tiles */
+  --track: #e1e4ea;        /* empty part of the closeness meters */
   --marker: #ffd23f;
-  --marker-ink: #1b2340;
-  --correct: #1e9e6a;
+  --marker-ink: #15192b;
+  --correct: #1a8f5f;
   --wrong: #c8423c;
   --hot: #f2541b;
-  --warm: #f5a524;
-  --cool: #7d8fe8;
+  --warm: #f0a000;
+  --cool: #6b7fe0;
 
   --display: "Bricolage Grotesque", "Arial Narrow", sans-serif;
   --body: "Atkinson Hyperlegible", system-ui, sans-serif;
@@ -20,19 +23,22 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #121733;
-    --ink: #e8ecf7;
-    --ink-soft: #9aa3c4;
-    --cobalt: #8fa0ff;
-    --tile: #1c2350;
-    --rule: #2e3870;
+    --paper: #1d1e23;
+    --ink: #f4f5f7;
+    --ink-soft: #b9bdc9;
+    --cobalt: #9aabff;
+    --button: #4a62ff;
+    --button-ink: #ffffff;
+    --tile: #2a2c33;
+    --rule: #5a5f6e;
+    --track: #33363e;
     --marker: #ffd23f;
-    --marker-ink: #121733;
-    --correct: #3cc48c;
+    --marker-ink: #15192b;
+    --correct: #34c285;
     --wrong: #ff8a80;
-    --hot: #ff7a45;
+    --hot: #ff7340;
     --warm: #ffc145;
-    --cool: #6f7fd6;
+    --cool: #8193ff;
     color-scheme: dark;
   }
 }
@@ -158,8 +164,8 @@ button, input { font: inherit; color: inherit; }
   padding: 0.75rem 1.25rem;
   border: 0;
   border-radius: 10px;
-  background: var(--cobalt);
-  color: var(--paper);
+  background: var(--button);
+  color: var(--button-ink);
   font-weight: 700;
   cursor: pointer;
 }
@@ -195,7 +201,7 @@ button, input { font: inherit; color: inherit; }
 .guess .meter {
   height: 0.625rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--rule) 55%, transparent);
+  background: var(--track);
   overflow: hidden;
 }
 .guess .meter span {
@@ -231,10 +237,10 @@ button, input { font: inherit; color: inherit; }
   padding: 1.5rem;
   border: 0;
   border-radius: 16px;
-  background: var(--paper);
+  background: var(--tile);
   color: var(--ink);
 }
-.stats::backdrop { background: rgb(18 23 51 / 0.55); }
+.stats::backdrop { background: rgb(0 0 0 / 0.6); }
 .stats h2 { margin: 0 0 1rem; font: 800 1.5rem/1.1 var(--display); }
 .stats h3 { margin: 1.5rem 0 0.5rem; font-size: 1rem; }
 .numbers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin: 0; }
@@ -273,7 +279,7 @@ button, input { font: inherit; color: inherit; }
   padding: 0.5rem 0.625rem;
   border: 2px solid var(--rule);
   border-radius: 8px;
-  background: var(--tile);
+  background: var(--paper);
   color: var(--ink);
   font: 0.8125rem/1.4 ui-monospace, Consolas, monospace;
   resize: vertical;
