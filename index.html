@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crux</title>
+  <meta name="description" content="A new question every day. The answer is always one word.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <h1 class="mark">Crux</h1>
+    <span class="no" id="no"></span>
+    <button class="plain" id="open-stats" type="button">Stats</button>
+  </header>
+
+  <main class="game">
+    <p class="question" id="question"></p>
+
+    <form class="entry" id="form" autocomplete="off">
+      <label for="guess" class="sr">Your one-word answer</label>
+      <input id="guess" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="30" placeholder="One word">
+      <button type="submit">Guess</button>
+    </form>
+    <p class="left" id="left"></p>
+    <p class="say" id="say" role="status" aria-live="polite"></p>
+
+    <section class="result" id="result" hidden>
+      <p class="verdict" id="verdict"></p>
+      <button type="button" id="share">Copy result</button>
+      <p class="next" id="next">Next question in <span id="countdown"></span></p>
+    </section>
+
+    <div class="tiles" id="tiles" role="img"></div>
+    <p class="hint" id="hint" hidden></p>
+
+    <section class="history" id="history" hidden>
+      <h2 class="history-title">Closest in meaning</h2>
+      <ol class="guesses" id="guesses"></ol>
+    </section>
+  </main>
+
+  <dialog class="stats" id="stats" aria-labelledby="stats-title">
+    <h2 id="stats-title">Your stats</h2>
+    <dl class="numbers">
+      <div><dt>Played</dt><dd id="s-played">0</dd></div>
+      <div><dt>Won</dt><dd id="s-win">0%</dd></div>
+      <div><dt>Streak</dt><dd id="s-streak">0</dd></div>
+      <div><dt>Best streak</dt><dd id="s-max">0</dd></div>
+    </dl>
+    <h3>Solved on guess</h3>
+    <ol class="dist" id="s-dist"></ol>
+    <form method="dialog"><button type="submit">Close</button></form>
+  </dialog>
+
+  <script src="questions.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
