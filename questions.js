@@ -5,6 +5,9 @@
 //   a       the answer: ONE word, letters only
 //   accept  optional: other one-word answers that also count (spellings, plurals, synonyms)
 //   hint    optional: shown after the third wrong guess
+//   like    optional: a common word with a similar meaning, used to rank guesses instead of the
+//           answer itself. Needed when an answer is too rare to have closeness data
+//           (build_closeness.py tells you), and helps when its ranks look like nonsense.
 //
 // After editing, run:
 //   python tools/build_closeness.py   (ranks guesses by closeness in meaning for any new answers)
@@ -111,4 +114,29 @@ window.QUESTIONS = [
   { q: "Which flame burns hotter, a blue one or a yellow one?", a: "blue" },
   { q: "What is a person who doesn't eat meat called?", a: "vegetarian", accept: ["vegan"] },
   { q: "What white liquid do cows produce?", a: "milk" },
+
+  // Harder, longer words.
+  { q: "What process lets plants turn sunlight, water and carbon dioxide into sugar?", a: "photosynthesis" },
+  { q: "What is the fear of the number 13 called?", a: "triskaidekaphobia", like: "superstition", hint: "It's built from the Greek for \"three and ten\", plus a fear." },
+  { q: "What is the word for the earthy smell after rain falls on dry ground?", a: "petrichor", like: "rain", hint: "Two Australian scientists coined it in 1964." },
+  { q: "What do you call someone who makes maps?", a: "cartographer" },
+  { q: "Which 34-letter word did Mary Poppins sing about, promising it would make you sound precocious?", a: "supercalifragilisticexpialidocious", like: "wonderful", hint: "It starts with \"super\"." },
+  { q: "What is the word for throwing someone out of a window?", a: "defenestration", like: "expulsion", hint: "Prague is famous for it, more than once." },
+  { q: "What do you call a scientist who studies insects?", a: "entomologist" },
+  { q: "What word describes animals that are most active at dawn and dusk?", a: "crepuscular", hint: "Not nocturnal, not diurnal, but in between." },
+  { q: "What is the art of speaking without moving your lips, so your voice seems to come from a puppet?", a: "ventriloquism", accept: ["ventriloquy"] },
+  { q: "Which word for a happy accidental discovery did Horace Walpole coin in 1754?", a: "serendipity" },
+  { q: "What is the full name for an ear, nose and throat doctor?", a: "otorhinolaryngologist", accept: ["otolaryngologist"], like: "otolaryngologist", hint: "\"Oto\" is ear, \"rhino\" is nose." },
+  { q: "What is the complete change from caterpillar to butterfly called?", a: "metamorphosis" },
+  { q: "Ironically, what is the name for the fear of long words?", a: "hippopotomonstrosesquippedaliophobia", like: "phobia", hint: "There's a hippo and a monster in it." },
+  { q: "What do you call someone who is at least 100 years old?", a: "centenarian" },
+  { q: "What is the condition where one sense triggers another, like seeing colours when you hear music?", a: "synesthesia", accept: ["synaesthesia"] },
+  { q: "Which word describes someone fond of using very long words?", a: "sesquipedalian", like: "verbose", hint: "In Latin it means \"a foot and a half long\"." },
+  { q: "What do you call a person who writes dictionaries?", a: "lexicographer" },
+  { q: "Which 28-letter word means opposition to cutting the Church of England's ties to the state?", a: "antidisestablishmentarianism", like: "disestablishment", hint: "\"Establishment\" is hiding in the middle." },
+  { q: "What is the art of beautiful, decorative handwriting?", a: "calligraphy" },
+  { q: "What is the fear of peanut butter sticking to the roof of your mouth?", a: "arachibutyrophobia", like: "phobia", hint: "It sounds a lot like the fear of spiders." },
+  { q: "What word, from medieval philosophy's \"fifth element\", means the purest example of something?", a: "quintessential", accept: ["quintessence"] },
+  { q: "What famously long word means the act of judging something to be worthless?", a: "floccinaucinihilipilification", like: "worthlessness", hint: "It's made of four Latin words for \"nothing\" strung together." },
+  { q: "What 45-letter word, the longest in many English dictionaries, names a lung disease caused by breathing in fine volcanic dust?", a: "pneumonoultramicroscopicsilicovolcanoconiosis", like: "silicosis", hint: "It starts with \"pneumono\" and has \"volcano\" in it." },
 ];

@@ -33,13 +33,13 @@ def read_answers():
     js = (
         "const vm=require('vm'),fs=require('fs');const s={window:{}};"
         "vm.runInNewContext(fs.readFileSync(process.argv[1],'utf8'),s);"
-        "console.log(JSON.stringify(s.window.QUESTIONS.map(q=>q.a)))"
+        "console.log(JSON.stringify(s.window.QUESTIONS.map(q=>[q.a,q.like||''])))"
     )
     out = subprocess.run(
         ["node", "-e", js, str(ROOT / "questions.js")],
         capture_output=True, text=True, check=True,
     ).stdout
-    return [a.lower() for a in json.loads(out)]
+    return [(a.lower(), like.lower()) for a, like in json.loads(out)]
 
 
 def load_vectors():
@@ -81,11 +81,14 @@ def main():
 
     OUT.mkdir(exist_ok=True)
     missing = []
-    for ans in answers:
-        if ans not in index:
-            missing.append(ans)
+    for ans, like in answers:
+        # "like" lends a common word's meaning to answers that are missing from the data or too
+        # rare for it to know well (often the long ones).
+        base = like if like in index else ans if ans in index else None
+        if base is None:
+            missing.append(f"{ans} (no data for \"{like}\" either)" if like else ans)
             continue
-        sims = cand_vecs @ vecs[index[ans]]
+        sims = cand_vecs @ vecs[index[base]]
         order = np.argsort(-sims)
         ranked = [ans] + [cand_words[i] for i in order if cand_words[i] != ans][: KEEP - 1]
         (OUT / f"{ans}.json").write_text(json.dumps(ranked, separators=(",", ":")), encoding="utf-8")
@@ -94,6 +97,7 @@ def main():
     if missing:
         print("No meaning data for: " + ", ".join(missing))
         print("Guesses for those days will still work, just without closeness ranks.")
+        print('Fix: give the question a common word with a similar meaning, like: "superstition".')
         sys.exit(1)
 
 

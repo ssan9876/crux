@@ -68,8 +68,9 @@
   function isCorrect(guess) {
     const g = norm(guess);
     if (accepted.includes(g)) return true;
-    // Forgive a single typo on longer words ("arachnophbia", "girafe").
-    return accepted.some((a) => a.length >= 6 && g.length >= 5 && typoDistance(g, a) <= 1);
+    // Forgive a typo on longer words ("arachnophbia", "girafe"), and two on very long ones.
+    const slack = (a) => (a.length >= 12 ? 2 : a.length >= 6 ? 1 : 0);
+    return g.length >= 5 && accepted.some((a) => typoDistance(g, a) <= slack(a));
   }
 
   // Closeness in meaning: closeness/<answer>.json lists the nearest words, closest first
@@ -200,7 +201,10 @@
 
     // Tiles
     const tiles = $("tiles");
-    tiles.style.setProperty("--n", answer.length);
+    // Up to 14 tiles per row. Longer words wrap onto evenly filled rows instead of shrinking
+    // to nothing (17 letters: two rows of 9, not 14 and 3).
+    const rows = Math.ceil(answer.length / 14);
+    tiles.style.setProperty("--n", Math.ceil(answer.length / rows));
     tiles.setAttribute("aria-label", `The answer has ${answer.length} letters`);
     tiles.replaceChildren(
       ...[...answer].map((ch, i) => {
